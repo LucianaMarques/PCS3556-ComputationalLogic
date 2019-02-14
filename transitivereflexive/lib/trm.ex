@@ -20,10 +20,18 @@ defmodule TRM do
 
   """
   def closure_algorithm do
-    graph = [{1,2},{2,3}]
-    matrix = create_adjacent_matrix(graph)
-    matrix = add_main_diagonal(matrix)
-    result = find_nodes(matrix)
+    # add your initial graph here
+    graph = []
+    graph = graph ++ creates_graph()
+    IO.inspect graph, label: "The initial graph is: " #debugging
+
+    #matrix = create_adjacent_matrix(graph)
+    #matrix = add_main_diagonal(matrix)
+    #result = find_nodes(matrix)
+  end
+
+  def creates_graph do
+    [{1,2},{2,3}]
   end
 
   @doc """
