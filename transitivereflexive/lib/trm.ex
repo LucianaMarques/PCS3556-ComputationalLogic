@@ -4,7 +4,7 @@ defmodule TRM do
   """
 
   @doc """
-
+    Main function of the program
   """
   def closure_algorithm do
 
@@ -13,7 +13,7 @@ defmodule TRM do
     graph = graph ++ creates_graph()
     IO.inspect graph, label: "The initial graph is: " #debugging
 
-    create_adjacent_matrix(graph, map_set)
+    # create_adjacent_matrix(graph, map_set)
 
     result = []
     result = result ++ find_nodes(graph)
@@ -21,7 +21,9 @@ defmodule TRM do
     result
   end
 
-  # add your initial graph here
+  @doc """
+   add your initial graph here
+  """
   def creates_graph do
     [{1,2},{2,3}]
   end
@@ -29,9 +31,9 @@ defmodule TRM do
   @doc """
 
   """
-  def create_adjacent_matrix(graph, map_set) do
-    Enum.map(graph, fn x -> {MapSet.put(map_set,x)} end)
-  end
+  # def create_adjacent_matrix(graph, map_set) do
+  #   Enum.map(graph, fn x -> {MapSet.put(map_set,x)} end)
+  # end
 
   @doc """
 
@@ -44,9 +46,10 @@ defmodule TRM do
   end
 
   @doc """
-
+    Goes through Graph and find possible edges
   """
   def find_edges(graph) do
+    IO.inspect [], label: "Find edges: "
     matrix = %{}
     final = []
     # add {origin -> [destin]}
@@ -56,10 +59,11 @@ defmodule TRM do
     # add all groups in result
     Enum.map(matrix, fn x -> {add_result(final,x, matrix)} end)
     final
+    IO.inspect final, label: "Final is: " #debugging
   end
 
   @doc """
-
+    add edges
   """
   def add_edge(matrix, edge) do
     {origin, destin} = edge
