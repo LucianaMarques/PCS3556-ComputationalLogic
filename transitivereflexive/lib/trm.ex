@@ -49,9 +49,13 @@ defmodule TRM do
   def find_edges(graph) do
     matrix = %{}
     final = []
+    # add {origin -> [destin]}
     Enum.map(graph, fn x -> {add_edge(matrix, x)} end)
+    # update {origin -> [destin/origin -> destines]}
     Enum.map(matrix, fn x -> {group_edges(x, matrix)} end)
-    Enum.map(matrix, fn x -> final ++ )
+    # add all groups in result
+    Enum.map(matrix, fn x -> {add_result(final,x, matrix)} end)
+    final
   end
 
   @doc """
@@ -72,6 +76,15 @@ defmodule TRM do
   def group_edges(edge,matrix) do
     {origin, destin} = edge
     list = Map.get(matrix, origin)
-    Enum.map(list, fn x -> {Map.get_and_update(matrix, origin, fn current_value -> {current_value, current_value ++ matrix[x]}} end) )
+    Enum.map(list, fn x -> {Map.get_and_update(matrix, origin, fn current_value -> {current_value, current_value ++ matrix[x]} end)} end)
+  end
+
+  @doc """
+
+  """
+  def add_result(result,x, matrix) do
+    {origin, destin} = x
+    edges = Map.get(matrix, origin)
+    Enum.map(edges, fn x -> {result ++ [origin, x]} end)
   end
 end
