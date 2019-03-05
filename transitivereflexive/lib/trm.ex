@@ -9,12 +9,8 @@ defmodule TRM do
   def closure_algorithm do
 
     graph = []
-    map_set = MapSet.new()
     graph = graph ++ creates_graph()
     IO.inspect graph, label: "The initial graph is: " #debugging
-
-    # create_adjacent_matrix(graph, map_set)
-
     result = []
     result = result ++ find_nodes(graph)
     IO.inspect result, label: "The result is: " #debugging
@@ -27,13 +23,6 @@ defmodule TRM do
   def creates_graph do
     [{1,2},{2,3}]
   end
-
-  @doc """
-
-  """
-  # def create_adjacent_matrix(graph, map_set) do
-  #   Enum.map(graph, fn x -> {MapSet.put(map_set,x)} end)
-  # end
 
   @doc """
 
@@ -63,7 +52,7 @@ defmodule TRM do
   end
 
   @doc """
-    add edges
+    add edges from graph
   """
   def add_edge(matrix, edge) do
     {origin, destin} = edge
@@ -75,7 +64,9 @@ defmodule TRM do
   end
 
   @doc """
-
+    group edges accordingly to the connections. For example, for (1,2), (2,3):
+    1 --> {2,3}
+    2 --> {3}
   """
   def group_edges(edge,matrix) do
     {origin, destin} = edge
