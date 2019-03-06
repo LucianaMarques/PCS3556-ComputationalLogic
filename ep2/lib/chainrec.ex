@@ -36,9 +36,34 @@ defmodule CHAINREC do
 
   @doc """
   Generates chain with grammar and maximum size
+  grammar  -> tuple
+  max_size -> integer
   """
   def gen_chain(grammar, max_size) do
-    true
+    # get terminals and the initial symbol
+    T = elem(grammar, 0)
+    Rules = elem(grammar, 1)
+    Init_sym = elem(grammar, 2)
+
+    # Chains list, originally empty
+    chains = {}
+
+  end
+
+  @doc """
+  Receives a rule such as A -> a and returns all possible chains with max_size
+  rule -> tuple of strings
+  max_size -> int
+  """
+  def gen_chain_rule(rule, max_size) do
+    # list of possible chains
+    chains = {}
+
+    # gets the possible chain members in tail
+    {head | tail} = rule
+
+    #adds iteratively until the chain size is equal or bigger than max_size
+    chains
   end
 
   @doc """
