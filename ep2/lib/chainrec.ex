@@ -71,19 +71,17 @@ defmodule CHAINREC do
   Only Chains without non_terminals are valid.
   """
   def add_chains(chains, max_size, rules, non_terminals) do
-    # Create new MapSet to be returned
+    # Creates new chain MapSet
     MapSet.new(new_chains)
 
-    Enum.map(chains, fn chain -> add_new_chains(new_chains, rules, non_terminals, max_size) end)
+    Enum.each(chains, fn chain -> add_new_chains(chain, new_chains, rules, non_terminals, max_size) end)
+
 
     # Checks if at least one generated chain still has non-terminals
     # If yes, repeats the procedure
     if (check_non_terminals(new_chains, non_terminals, max_size)) do
       add_chains(chains, max_size, grammar)
     end
-
-    # Return valid possible chains MapSet
-    new_chains
   end
 
   @doc """
@@ -127,29 +125,30 @@ defmodule CHAINREC do
   end
 
   @doc """
-  Function to add a new member to chains recursively
+  Function to add a new member to new_chains MapSet
 
+  chain         -> String
   new_chains    -> MapSet
   rules         -> Map
   non_terminals -> MapSet
   max_size      -> Int
   """
-  def add_new_chains(new_chains, rules, non_terminals, max_size) do
-    # creates chain list for easier map function implementation
-    chains = MapSet.to_list(new_chains)
-
-    # Start with first chain
-    chain = first(chain)
-    position = 0
-
-    # for every element in chain, verify if it's a non terminal
-    # Enum.map(chain, fn element -> if (MapSet.member?(non_terminals, element) do ))
-
-    chain
+  def add_new_chains(chain, new_chains, rules, non_terminals, max_size) do
+    base_chain = []
+    # Enum.each(chain, fn element -> base_chain = replace_non_terminals(element, base_chain, max_size, non_terminals, rules))
+    Enum.each(chain, fn element -> base_chain ++ replace_non_terminals(element, base_chain, max_size, non_terminals, rules))
+    base_chain
   end
 
-  def replace_non_terminals(chain, non_terminals, max_size, grammar) do
 
+  def replace_non_terminals(element, base_chain, max_size, non_terminals, rules) do
+    if (MapSet.member?(non_terminals, element) == false) do
+      Enum.map(base_chain, fn b_chain -> b_chain + element end)
+    else
+      items = Map.get(rules, element, default \\ nil)
+      new_chains = base_chains
+      Enum.each(items, fn item -> Enum.map(base_chain, fn b_chain -> b_chain + item))
+    end
   end
 
   @doc """
