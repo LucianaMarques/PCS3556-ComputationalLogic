@@ -1,3 +1,5 @@
+use Bitwise
+
 defmodule CHAINREC do
   @moduledoc """
   Documentation for CHAINREC.
@@ -87,7 +89,7 @@ defmodule CHAINREC do
     found = 1
 
     # Searched in every element from every chain
-    Enum.map(chains, fn chain -> found = found & has_terminals(chain, non_terminals, 0) end)
+    Enum.map(chains, fn chain -> found = found &&& has_terminals(chain, non_terminals, 0) end)
 
     # Returns the result in found
     found
@@ -98,7 +100,7 @@ defmodule CHAINREC do
   """
   def has_terminals(chain, non_terminals, position) do
     if (List.keymember?(non_terminals, chain, position)) do
-      1 & has_terminals(chain, non_terminals, position+1)
+      1 &&& has_terminals(chain, non_terminals, position+1)
     else
       0
     end
@@ -113,7 +115,6 @@ defmodule CHAINREC do
     else
       0
     end
-
   end
 
   @doc """
