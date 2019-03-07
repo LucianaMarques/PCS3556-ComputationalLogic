@@ -43,14 +43,14 @@ defmodule CHAINREC do
     # get terminals and the initial symbol
     T = elem(grammar, 0)
     N = elem(grammar, 1)
-    Rules = elem(grammar, 2)
+    Rules = elem(grammar, 2) # MapSet of grammar rules
     Init_sym = elem(grammar, 3)
 
     # Chains list, originally with Init_sym
     chains = [Init_sym]
 
     # Given Init_sym and grammar, create possible chains
-    chains = gen_chains_rule(chains, max_size, grammar)
+    chains = add_chains(chains, max_size, grammar)
 
     # Returns the final list of possible chains
     chains
@@ -62,18 +62,17 @@ defmodule CHAINREC do
   rule -> tuple of strings
   max_size -> int
   """
-  def gen_chains_rule(chains, max_size, grammar) do
-    # # list of possible chains
-    # chains = []
+  def add_chains(chains, max_size, grammar) do
+    # Checks for new possible chains iteratively
+    Enum.map(chains, fn chain -> chains = add_new_chains(chain, grammar, max_size) end)
+    add_chains(chains, max_size, grammar)
+  end
 
-    # gets the possible chain members in tail
-    # [head | tail] = rule
+  @doc """
+  Whn max_size is reached
+  """
+  def add_chains(chains, max_size, grammar) when do # ADD STOP CONDITION!
 
-    # adds iteratively until the chain size is equal or bigger than max_size
-    # add_new_chain(tail, max_size, chains)
-    Enum.map(chains, fn chain -> add_new_chains(chain, grammar, max_size) end)
-
-    chains
   end
 
   @doc """
@@ -94,7 +93,7 @@ defmodule CHAINREC do
     chain = []
 
     # for every element in chain, verify if it's a non terminal
-    Enum.map(chain, fn element -> [chain | check_nonterminal(element, non_terminals, gramamar)] end)
+    Enum.map(chain, fn element -> chain = [chain | add_new_chains(element, grammar, non_terminals)] end)
   end
 
   @doc """
