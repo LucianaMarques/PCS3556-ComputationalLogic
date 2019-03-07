@@ -42,42 +42,48 @@ defmodule CHAINREC do
   max_size -> integer
   """
   def gen_chains(grammar, max_size) do
+    # grammar -> list
     # get terminals and the initial symbol
-    T = elem(grammar, 0)
-    N = elem(grammar, 1)
-    Rules = elem(grammar, 2) # MapSet of grammar rules
-    Init_sym = elem(grammar, 3)
+    T = elem(grammar, 0) # MapSet
+    N = elem(grammar, 1) # MapSet
+    Rules = elem(grammar, 2) # Map
+    Init_sym = elem(grammar, 3) # String
 
     # Chains list, originally with Init_sym
-    chains = [Init_sym]
+    MapSet.new(chains) # MapSet of Strings
+    MapSet.put(chains, Init_sym)
 
     # Given Init_sym and grammar, create possible chains
-    chains = add_chains(chains, max_size, grammar)
+    all_chains = add_chains(chains, max_size, Rules, N)
 
     # Returns the final list of possible chains
-    chains
-
+    all_chains
   end
 
   @doc """
-  Receives a rule such as A -> a and returns all possible chains with max_size
-  rule -> tuple of strings
-  max_size -> int
-  """
-  def add_chains(chains, max_size, grammar) do
-    # Checks for new possible chains iteratively
-    # When generated chain exceeds max_size, exclude it from chains list
-    c = [] # create new list to be returned in map function
-    Enum.map(chains, fn chain -> c = [ c | add_new_chains(chain, grammar, max_size)] end)
+  chains -> MapSet
+  max_size -> Int
+  rules -> Map
+  non_terminals -> MapSet
 
-    # Search for non terminals on chains with
-    # size less of bigger than max_size
-    if (check_non_terminals(c, non_terminals, max_size)) do
+  Checks for new possible chains iteratively. When generated chain exceeds max_size,
+  exclude it from chains list.
+  Only Chains without non_terminals are valid.
+  """
+  def add_chains(chains, max_size, rules, non_terminals) do
+    # Create new MapSet to be returned
+    MapSet.new(new_chains)
+
+    Enum.map(chains, fn chain -> add_new_chains(new_chains, rules, non_terminals, max_size) end)
+
+    # Checks if at least one generated chain still has non-terminals
+    # If yes, repeats the procedure
+    if (check_non_terminals(new_chains, non_terminals, max_size)) do
       add_chains(chains, max_size, grammar)
     end
 
-    # Return created list
-    c
+    # Return valid possible chains MapSet
+    new_chains
   end
 
   @doc """
@@ -108,6 +114,9 @@ defmodule CHAINREC do
 
   @doc """
   Checks a chain for non-terminal presence
+  chain -> String
+  non_terminals -> MapSet
+  position -> integer
   """
   def has_terminals(chain, non_terminals, position) when position == String.length(chain)-1 do
     if (List.keymember?(non_terminals, chain, position)) do
@@ -119,51 +128,28 @@ defmodule CHAINREC do
 
   @doc """
   Function to add a new member to chains recursively
+
+  new_chains    -> MapSet
+  rules         -> Map
+  non_terminals -> MapSet
+  max_size      -> Int
   """
-  def add_new_chains(chain, grammar, max_size, non_terminals) do
-    # get last chain
-    # last_chain = last(chains)
+  def add_new_chains(new_chains, rules, non_terminals, max_size) do
+    # creates chain list for easier map function implementation
+    chains = MapSet.to_list(new_chains)
 
-    # add an extra element to the end of the list
-    # and add the result to the general list of chains
-    # chains = [chains | [last_chain | element]]
-
-    # call it recursively (max_size) times
-    # add_new_chain(element, max_size - 1, chains)
-
-    # creates an empty chain list
-    chain = []
+    # Start with first chain
+    chain = first(chain)
+    position = 0
 
     # for every element in chain, verify if it's a non terminal
-    Enum.map(chain, fn element -> chain = [chain | add_new_chains(element, grammar, non_terminals)] end)
+    # Enum.map(chain, fn element -> if (MapSet.member?(non_terminals, element) do ))
+
+    chain
   end
 
-  @doc """
-  Checks if an element is a non-terminal
-  """
-  def check_nonterminal(element, non_terminals, grammar) do
-    # if element is non-terminal
-    if MapSet.member?(non_terminals, head) do
-      true
-    # if it's not a non-terminal
-    else
-      false
-    end
-  end
+  def replace_non_terminals(chain, non_terminals, max_size, grammar) do
 
-  @doc """
-  When max_size is reached
-  """
-  def add_new_chain(rule, max_size, chains) when max_size == 1 do
-    # get last chain
-    last_chain = last(chains)
-
-    # add an extra element to the end of the list
-    # and add the result to the general list of chains
-    chains = [chains | [last_chain | element]]
-
-    # return chains
-    chains
   end
 
   @doc """
