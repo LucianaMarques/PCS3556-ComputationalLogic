@@ -64,19 +64,55 @@ defmodule CHAINREC do
   """
   def add_chains(chains, max_size, grammar) do
     # Checks for new possible chains iteratively
-    Enum.map(chains, fn chain -> chains = add_new_chains(chain, grammar, max_size) end)
+    # When generated chain exceeds max_size, exclude it from chains list
+    c = [] # create new list to be returned in map function
+    Enum.map(chains, fn chain -> c = [ c | add_new_chains(chain, grammar, max_size)] end)
 
     # Search for non terminals on chains with
     # size less of bigger than max_size
-    if (non_terminals(chains)) do
+    if (check_non_terminals(c, non_terminals, max_size)) do
       add_chains(chains, max_size, grammar)
+    end
+
+    # Return created list
+    c
+  end
+
+  @doc """
+  Checks all chains for size and presence of non terminals
+  Uses bitwise to get the result
+  """
+  def check_non_terminals(chains, non_terminals, max_size) do
+    # Found is 1
+    found = 1
+
+    # Searched in every element from every chain
+    Enum.map(chains, fn chain -> found = found & has_terminals(chain, non_terminals, 0) end)
+
+    # Returns the result in found
+    found
+  end
+
+  @doc """
+  Checks a chain for non-terminal presence
+  """
+  def has_terminals(chain, non_terminals, position) do
+    if (List.keymember?(non_terminals, chain, position)) do
+      1 & has_terminals(chain, non_terminals, position+1)
+    else
+      0
     end
   end
 
   @doc """
-  Whn max_size is reached
+  Checks a chain for non-terminal presence
   """
-  def add_chains(chains, max_size, grammar) when do # ADD STOP CONDITION!
+  def has_terminals(chain, non_terminals, position) when position == String.length(chain)-1 do
+    if (List.keymember?(non_terminals, chain, position)) do
+      1
+    else
+      0
+    end
 
   end
 
