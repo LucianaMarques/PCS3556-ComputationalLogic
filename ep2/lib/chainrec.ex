@@ -39,7 +39,7 @@ defmodule CHAINREC do
   grammar  -> tuple
   max_size -> integer
   """
-  def gen_chain(grammar, max_size) do
+  def gen_chainn(grammar, max_size) do
     # get terminals and the initial symbol
     T = elem(grammar, 0)
     Rules = elem(grammar, 1)
@@ -47,6 +47,9 @@ defmodule CHAINREC do
 
     # Chains list, originally empty
     chains = {}
+
+    # For every rule, create possible chains
+    Enum.map(Rules, fn R -> chains = chain + gen_chain_rule(R, max_size) end)
 
   end
 
@@ -63,7 +66,7 @@ defmodule CHAINREC do
     {head | tail} = rule
 
     #adds iteratively until the chain size is equal or bigger than max_size
-    add_chain(tail, max_size, chains)
+    add_new_chain(tail, max_size, chains)
 
     chains
   end
@@ -71,19 +74,19 @@ defmodule CHAINREC do
   @doc """
   Function to add a new member to chains recursively
   """
-  def add_chain(tail, max_size,chains) do
+  def add_new_chain(tail, max_size, chains) do
     # get last chain
     # add an extra element
     # add result to chains
     # call it recursively
-    add_chain(tail, max_size - 1, chains)
+    add_new_chain(tail, max_size - 1, chains)
   end
 
 
   @doc """
   When max_size is reached
   """
-  def add_chain(rule, max_size, chains) when max_size == 1 do
+  def add_new_chain(rule, max_size, chains) when max_size == 1 do
     # get last chain
     # add an extra element
     # add result to chains and return it
@@ -92,7 +95,17 @@ defmodule CHAINREC do
   @doc """
   Check if a chain is valid given a certain grammar
   """
-  def recognition(chain, grammar, max_size) do
-    true
+  def recognition(tape, grammar, max_size) do
+    # generates possible chains given grammar
+    chains = gen_chain(grammar,max_size)
+
+    # checks if tape is in chains
+    if (MapSet.member?(chains, tape)) do
+      IO.puts(true)
+      true
+    else
+      IO.puts(false)
+      false
+    end
   end
 end
