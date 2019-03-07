@@ -42,14 +42,14 @@ defmodule CHAINREC do
   def gen_chain(grammar, max_size) do
     # get terminals and the initial symbol
     T = elem(grammar, 0)
-    Rules = elem(grammar, 1)
-    Init_sym = elem(grammar, 2)
+    N = elem(grammar, 1)
+    Rules = elem(grammar, 2)
+    Init_sym = elem(grammar, 3)
 
-    # Chains list, originally empty
-    # List of MapSets
-    chains = []
+    # Chains list, originally with Init_sym
+    chains = [Init_sym]
 
-    # For every rule Rx in R list, create possible chains
+    # Given Init_sym and grammar, create possible chains
     Enum.map(Rules, fn Rx -> chains = [gen_chains_rule(Rx, max_size) | chains] end)
 
     # Returns the final list of possible chains
