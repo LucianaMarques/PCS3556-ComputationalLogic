@@ -65,7 +65,12 @@ defmodule CHAINREC do
   def add_chains(chains, max_size, grammar) do
     # Checks for new possible chains iteratively
     Enum.map(chains, fn chain -> chains = add_new_chains(chain, grammar, max_size) end)
-    add_chains(chains, max_size, grammar)
+
+    # Search for non terminals on chains with
+    # size less of bigger than max_size
+    if (non_terminals(chains)) do
+      add_chains(chains, max_size, grammar)
+    end
   end
 
   @doc """
