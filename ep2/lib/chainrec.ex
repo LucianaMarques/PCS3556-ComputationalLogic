@@ -6,19 +6,6 @@ defmodule CHAINREC do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> CHAINREC.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
-
-  @doc """
   Parse a set recursively and returns one of its elements
   """
   def rec_parse(set_list) do
