@@ -78,12 +78,16 @@ defmodule CHAINREC do
   @doc """
   Function to add a new member to chains recursively
   """
-  def add_new_chain(tail, max_size, chains) do
+  def add_new_chain(element, max_size, chains) do
     # get last chain
-    # add an extra element
-    # add result to chains
-    # call it recursively
-    add_new_chain(tail, max_size - 1, chains)
+    last_chain = last(chains)
+
+    # add an extra element to the end of the list
+    # and add the result to the general list of chains
+    chains = [chains | [last_chain | element]]
+
+    # call it recursively (max_size) times
+    add_new_chain(element, max_size - 1, chains)
   end
 
 
@@ -92,8 +96,14 @@ defmodule CHAINREC do
   """
   def add_new_chain(rule, max_size, chains) when max_size == 1 do
     # get last chain
-    # add an extra element
-    # add result to chains and return it
+    last_chain = last(chains)
+
+    # add an extra element to the end of the list
+    # and add the result to the general list of chains
+    chains = [chains | [last_chain | element]]
+
+    # return chains
+    chains
   end
 
   @doc """
