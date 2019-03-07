@@ -135,19 +135,29 @@ defmodule CHAINREC do
   """
   def add_new_chains(chain, new_chains, rules, non_terminals, max_size) do
     base_chain = []
-    # Enum.each(chain, fn element -> base_chain = replace_non_terminals(element, base_chain, max_size, non_terminals, rules))
     Enum.each(chain, fn element -> base_chain ++ replace_non_terminals(element, base_chain, max_size, non_terminals, rules))
-    base_chain
+    creates_mapset(base_chain, new_chains, max_rule)
   end
 
+  @doc """
+  Adds elements in base_chain to new_chains MapSet, checking if sice <= max_size
+  """
+  def creates_mapset(base_chain, new_chains, max_rule) do
+    Enum.each(base_chain, fn b_chain -> if (String.length(b_chain) <= max_size) do MapSet.put(new_chains, b_chain) end end)
+  end
 
+  @doc """
+  If element is terminal, adds it to the base chains.
+  If not, applies terminal's rule.
+  """
   def replace_non_terminals(element, base_chain, max_size, non_terminals, rules) do
     if (MapSet.member?(non_terminals, element) == false) do
       Enum.map(base_chain, fn b_chain -> b_chain + element end)
     else
       items = Map.get(rules, element, default \\ nil)
-      new_chains = base_chains
-      Enum.each(items, fn item -> Enum.map(base_chain, fn b_chain -> b_chain + item))
+      new_chains = []
+      Enum.each(items, fn item -> [new_chains || Enum.map(base_chain, fn b_chain -> b_chain + item)])
+      new_chains
     end
   end
 
