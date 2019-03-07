@@ -39,7 +39,7 @@ defmodule CHAINREC do
   grammar  -> tuple
   max_size -> integer
   """
-  def gen_chain(grammar, max_size) do
+  def gen_chains(grammar, max_size) do
     # get terminals and the initial symbol
     T = elem(grammar, 0)
     N = elem(grammar, 1)
@@ -50,7 +50,7 @@ defmodule CHAINREC do
     chains = [Init_sym]
 
     # Given Init_sym and grammar, create possible chains
-    Enum.map(Rules, fn Rx -> chains = [gen_chains_rule(Rx, max_size) | chains] end)
+    chains = gen_chains_rule(chains, max_size, grammar)
 
     # Returns the final list of possible chains
     chains
@@ -62,15 +62,16 @@ defmodule CHAINREC do
   rule -> tuple of strings
   max_size -> int
   """
-  def gen_chains_rule(rule, max_size) do
-    # list of possible chains
-    chains = []
+  def gen_chains_rule(chains, max_size, grammar) do
+    # # list of possible chains
+    # chains = []
 
     # gets the possible chain members in tail
-    [head | tail] = rule
+    # [head | tail] = rule
 
-    #adds iteratively until the chain size is equal or bigger than max_size
-    add_new_chain(tail, max_size, chains)
+    # adds iteratively until the chain size is equal or bigger than max_size
+    # add_new_chain(tail, max_size, chains)
+    Enum.map(chains, fn chain -> add_new_chains(chain, grammar, max_size) end)
 
     chains
   end
@@ -78,18 +79,36 @@ defmodule CHAINREC do
   @doc """
   Function to add a new member to chains recursively
   """
-  def add_new_chain(element, max_size, chains) do
+  def add_new_chains(chain, grammar, max_size, non_terminals) do
     # get last chain
-    last_chain = last(chains)
+    # last_chain = last(chains)
 
     # add an extra element to the end of the list
     # and add the result to the general list of chains
-    chains = [chains | [last_chain | element]]
+    # chains = [chains | [last_chain | element]]
 
     # call it recursively (max_size) times
-    add_new_chain(element, max_size - 1, chains)
+    # add_new_chain(element, max_size - 1, chains)
+
+    # creates an empty chain list
+    chain = []
+
+    # for every element in chain, verify if it's a non terminal
+    Enum.map(chain, fn element -> [chain | check_nonterminal(element, non_terminals, gramamar)] end)
   end
 
+  @doc """
+  Checks if an element is a non-terminal
+  """
+  def check_nonterminal(element, non_terminals, grammar) do
+    # if element is non-terminal
+    if MapSet.member?(non_terminals, head) do
+      true
+    # if it's not a non-terminal
+    else
+      false
+    end
+  end
 
   @doc """
   When max_size is reached
