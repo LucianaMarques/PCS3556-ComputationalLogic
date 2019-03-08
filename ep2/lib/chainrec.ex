@@ -37,7 +37,7 @@ defmodule CHAINREC do
     Init_sym = elem(grammar, 3) # String
 
     # Chains list, originally with Init_sym
-    MapSet.new(chains) # MapSet of Strings
+    chains = MapSet.new() # MapSet of Strings
     MapSet.put(chains, Init_sym)
 
     # Given Init_sym and grammar, create possible chains
@@ -59,7 +59,7 @@ defmodule CHAINREC do
   """
   def add_chains(chains, max_size, rules, non_terminals) do
     # Creates new chain MapSet
-    MapSet.new(new_chains)
+    new_chains = MapSet.new()
 
     Enum.each(chains, fn chain -> add_new_chains(chain, new_chains, rules, non_terminals, max_size) end)
 
@@ -67,7 +67,7 @@ defmodule CHAINREC do
     # Checks if at least one generated chain still has non-terminals
     # If yes, repeats the procedure
     if (check_non_terminals(new_chains, non_terminals, max_size)) do
-      add_chains(chains, max_size, grammar)
+      add_chains(chains, max_size, rules, non_terminals)
     end
   end
 
@@ -75,12 +75,12 @@ defmodule CHAINREC do
   Checks all chains for size and presence of non terminals
   Uses bitwise to get the result
   """
-  def check_non_terminals(chains, non_terminals, max_size) do
+  def check_non_terminals(chains, non_terminals) do
     # Found is 1
     found = 1
 
     # Searched in every element from every chain
-    Enum.map(chains, fn chain -> found = found &&& has_terminals(chain, non_terminals, 0) end)
+    Enum.map(chains, fn chain -> found &&& has_terminals(chain, non_terminals, 0) end)
 
     # Returns the result in found
     found
@@ -122,7 +122,7 @@ defmodule CHAINREC do
   """
   def add_new_chains(chain, new_chains, rules, non_terminals, max_size) do
     base_chain = []
-    Enum.each(chain, fn element -> base_chain ++ replace_non_terminals(element, base_chain, max_size, non_terminals, rules))
+    Enum.each(chain, fn element -> base_chain ++ replace_non_terminals(element, base_chain, max_size, non_terminals, rules) end)
     creates_mapset(base_chain, new_chains, max_rule)
   end
 
@@ -143,7 +143,7 @@ defmodule CHAINREC do
     else
       items = Map.get(rules, element, default \\ nil)
       new_chains = []
-      Enum.each(items, fn item -> [new_chains || Enum.map(base_chain, fn b_chain -> b_chain + item)])
+      Enum.each(items, fn item -> [new_chains || Enum.map(base_chain, fn b_chain -> b_chain + item end)] end)
       new_chains
     end
   end
