@@ -80,7 +80,7 @@ defmodule CHAINREC do
     found = 1
 
     # Searched in every element from every chain
-    Enum.map(chains, fn chain -> found &&& has_terminals(chain, non_terminals, 0) end)
+    Enum.map(chains, fn chain -> found &&& has_terminals(chain, non_terminals, 0, String.length(chain)) end)
 
     # Returns the result in found
     found
@@ -89,9 +89,9 @@ defmodule CHAINREC do
   @doc """
   Checks a chain for non-terminal presence
   """
-  def has_terminals(chain, non_terminals, position) do
-    if (List.keymember?(non_terminals, chain, position)) do
-      1 &&& has_terminals(chain, non_terminals, position+1)
+  def has_terminals(chain, non_terminals, position, chain_size) do
+    if (MapSet.member?(non_terminals, chain)) do
+      1 &&& has_terminals(chain, non_terminals, position+1, chain_size)
     else
       0
     end
@@ -103,8 +103,8 @@ defmodule CHAINREC do
   non_terminals -> MapSet
   position -> integer
   """
-  def has_terminals(chain, non_terminals, position) when position == 2 do
-    if (List.keymember?(non_terminals, chain, position)) do
+  def has_terminals(chain, non_terminals, position, chain_size) when position == chain_size-1 do
+    if (MapSet.member?(non_terminals, chain)) do
       1
     else
       0
