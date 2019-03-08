@@ -1,3 +1,5 @@
+use Bitwise
+
 defmodule CHAINRECTest do
   use ExUnit.Case
   doctest CHAINREC
@@ -9,7 +11,8 @@ defmodule CHAINRECTest do
     non_terminals = MapSet.new()
     MapSet.put(non_terminals, "A")
     MapSet.put(non_terminals, "B")
-    terminal = CHAINREC.has_terminals("aAAa", non_terminals, 0, 3)
+    chain = "aAAa"
+    terminal = CHAINREC.has_terminals(chain, non_terminals, 0, String.length(chain))
     IO.puts(terminal)
   end
 end
