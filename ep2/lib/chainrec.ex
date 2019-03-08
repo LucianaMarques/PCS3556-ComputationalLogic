@@ -90,10 +90,11 @@ defmodule CHAINREC do
   Checks a chain for non-terminal presence
   """
   def has_terminals(chain, non_terminals, position, chain_size) do
+    IO.puts(MapSet.member?(non_terminals, List.pop_at(chain, 0)))
     if (position == (chain_size - 1)) do
       has_terminals(chain, non_terminals)
     else
-      if (MapSet.member?(non_terminals, String.at(chain,position))) do
+      if (MapSet.member?(non_terminals, List.pop_at(chain, 0))) do
         1 ||| has_terminals(chain, non_terminals, position+1, chain_size)
       else
         0 ||| has_terminals(chain, non_terminals, position+1, chain_size)
