@@ -23,6 +23,9 @@ defmodule DETERMAUTOMATA do
     end
   end
 
+  @doc """
+  Gets next state
+  """
   def get_next_state(current_state, tape) do
     cond do
       List.first(tape) == nil -> #end of tape

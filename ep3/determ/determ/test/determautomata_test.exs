@@ -9,14 +9,13 @@ defmodule DETERMAUTOMATATest do
     DETERMAUTOMATA.read(tape)
   end
 
-  test "list manipulation" do
-    tape = String.codepoints("")
-    assert List.first(tape) == nil
-  end
-
-  test "automaton transition" do
-    tape = String.codepoints("ab")
+  test "automaton transition - #1" do
+    tape = String.codepoints("abb")
     assert DETERMAUTOMATA.determ_automaton(tape) == true
   end
 
+  test "automaton transition - #2" do
+    tape = String.codepoints("aab")
+    assert DETERMAUTOMATA.determ_automaton(tape) == false
+  end
 end
