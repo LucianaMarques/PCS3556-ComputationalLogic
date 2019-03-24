@@ -2,13 +2,12 @@ defmodule DETERMAUTOMATA do
   @moduledoc """
   Documentation for DETERMAUTOMATA.
   """
-
   @doc """
   Automaton's main functionality
   """
   def determ_automaton(tape) do
     current_state = :q0
-    Enum.map(tape, fn x -> current_state = automata_transition(current_state,x) end)
+    accep = automata_transition(current_state,tape)
     IO.puts(current_state)
   end
 
@@ -16,26 +15,45 @@ defmodule DETERMAUTOMATA do
   Computes the automaton's transitions.
   q2 is accept state, all other are rejection
   """
-  def automata_transition(current_state, input) do
-    if (current_state == :q0) do
-      if (input == :a) do
-        :q1
+  def automata_transition(current_state, tape) do
+    next_state = get_next_state(current_state, tape)
+    if (nex_state == :q2) do
+      IO.puts("Chain accepted")
+    else
+      IO.puts("Chain not accepted")
+    end
+  end
+
+  def get_next_state(current_state, tape) do
+    cond do
+      first(list) == nil -->
+        current_state
+
+  else if (current_state == :q0) do
+      if (first(tape) == :a) do
+        delete(tape,0)
+        automata_transition(:q1,tape)
       else
-        :q2
+        delete(tape,0)
+        automata_transition(:q3,tape)
       end
     end
     if (current_state == :q1) do
-      if (input == :a) do
-        :q3
+      if (first(tape) == :a) do
+        delete(tape,0)
+        automata_transition(:q3,tape)
       else
-        :q2
+        delete(tape,0)
+        automata_transition(:q2,tape,i+1)
       end
     end
     if (current_state == :q2) do
-      :q2
+      delete(tape,0)
+      automata_transition(:q2,tape)
     end
     if (current_state == :q3) do
-      :q3
+      delete(tape,0)
+      automata_transition(:q3,tape)
     end
   end
 

@@ -9,5 +9,10 @@ defmodule DETERMAUTOMATATest do
     Enum.map(tape, fn x -> IO.puts(x) end)
   end
 
+  test "automaton transition" do
+    tape = String.codepoints("ab")
+    # initial state is q0
+    DETERMAUTOMATA.determ_automaton(tape)
+  end
 
 end
