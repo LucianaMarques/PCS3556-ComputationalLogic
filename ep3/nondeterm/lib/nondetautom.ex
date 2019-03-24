@@ -41,16 +41,18 @@ defmodule NONDETAUTOM do
         end
 
       current_state == "q1" ->
-        if (List.first(tape) == "a") do
+        if (List.first(tape) == "nil") do
+          current_state
+        else
           tape2 = List.delete_at(tape,0)
           get_next_state("q2",tape2)
         end
 
       current_state == "q2" ->
-        tape2 = List.delete_at(tape,0)
-        if (List.first(tape2) == nil) do
-          get_next_state("q2",tape2)
+        if (List.first(tape) == nil) do
+          current_state
         else
+          tape2 = List.delete_at(tape,0)
           get_next_state("q4",tape2)
         end
 
