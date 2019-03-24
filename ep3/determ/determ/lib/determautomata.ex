@@ -7,8 +7,9 @@ defmodule DETERMAUTOMATA do
   """
   def determ_automaton(tape) do
     current_state = :q0
-    accep = automata_transition(current_state,tape)
     IO.puts(current_state)
+    accep = automata_transition(current_state,tape)
+    IO.puts(accep)
   end
 
   @doc """
@@ -17,7 +18,7 @@ defmodule DETERMAUTOMATA do
   """
   def automata_transition(current_state, tape) do
     next_state = get_next_state(current_state, tape)
-    if (nex_state == :q2) do
+    if (next_state == :q2) do
       IO.puts("Chain accepted")
     else
       IO.puts("Chain not accepted")
@@ -26,49 +27,49 @@ defmodule DETERMAUTOMATA do
 
   def get_next_state(current_state, tape) do
     cond do
-      first(list) == nil -->
+      List.first(tape) == nil -> #end of tape
         current_state
 
-  else if (current_state == :q0) do
-      if (first(tape) == :a) do
-        delete(tape,0)
-        automata_transition(:q1,tape)
-      else
-        delete(tape,0)
-        automata_transition(:q3,tape)
-      end
-    end
-    if (current_state == :q1) do
-      if (first(tape) == :a) do
-        delete(tape,0)
-        automata_transition(:q3,tape)
-      else
-        delete(tape,0)
-        automata_transition(:q2,tape,i+1)
-      end
-    end
-    if (current_state == :q2) do
-      delete(tape,0)
-      automata_transition(:q2,tape)
-    end
-    if (current_state == :q3) do
-      delete(tape,0)
-      automata_transition(:q3,tape)
+      current_state == :q0 ->
+        if (List.first(tape) == :a) do
+          List.delete(tape,0)
+          get_next_state(:q1,tape)
+        else
+          List.delete(tape,0)
+          get_next_state(:q3,tape)
+        end
+
+      current_state == :q1 ->
+        if (List.first(tape) == :a) do
+          List.delete(tape,0)
+          get_next_state(:q3,tape)
+        else
+          List.delete(tape,0)
+          get_next_state(:q2,tape)
+        end
+
+      current_state == :q2 ->
+        List.delete(tape,0)
+        get_next_state(:q2,tape)
+
+      current_state == :q3 ->
+        List.delete(tape,0)
+        get_next_state(:q3,tape)
     end
   end
 
   @doc """
   Gets the character at the current position of tape
-  May be nil in case tape is over
+  nil when tape is over
   """
-  def read(tape,i) do
-    String.at(tape,i)
+  def read(tape) do
+    if (List.first(tape) == nil) do
+      IO.puts("End of tape")
+    else
+      IO.puts(List.first(tape))
+      tape2 = List.delete_at(tape,0)
+      read(tape2)
+    end
   end
 
-  @doc """
-  Moves current position of tape
-  """
-  def reconfig(i) do
-    i + 1
-  end
 end
