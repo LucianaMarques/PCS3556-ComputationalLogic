@@ -25,36 +25,42 @@ defmodule NONDETAUTOM do
   end
 
   def get_next_state(current_state, tape) do
+    IO.puts(current_state)
     cond do
       List.first(tape) == nil -> #end of tape
         current_state
 
+      # This state can be split in two paths
       current_state == "q0" ->
-        IO.puts("Beggining of tape")
         if (List.first(tape) == "a") do
           tape2 = List.delete_at(tape,0)
-          get_next_state("q1",tape2)
-        else
-          tape2 = List.delete_at(tape,0)
-          get_next_state("q3",tape2)
+          # if path through q1 doesn't work, try trough q3
+          if (get_next_state("q1",tape2) == "q1") do
+            get_next_state("q3",tape2)
+          end
         end
 
       current_state == "q1" ->
         if (List.first(tape) == "a") do
-          tape2 = List.delete_at(tape,0)
-          get_next_state("q3",tape2)
-        else
           tape2 = List.delete_at(tape,0)
           get_next_state("q2",tape2)
         end
 
       current_state == "q2" ->
         tape2 = List.delete_at(tape,0)
-        get_next_state("q2",tape2)
+        if (List.first(tape2) == nil) do
+          get_next_state("q2",tape2)
+        else
+          get_next_state("q4",tape2)
+        end
 
       current_state == "q3" ->
         tape2 = List.delete_at(tape,0)
         get_next_state("q3",tape2)
+
+      current_state == "q4" ->
+        tape2 = List.delete_at(tape,0)
+        get_next_state("q4",tape2)
     end
   end
 
