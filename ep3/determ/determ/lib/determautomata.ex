@@ -6,10 +6,8 @@ defmodule DETERMAUTOMATA do
   Automaton's main functionality
   """
   def determ_automaton(tape) do
-    current_state = :q0
-    IO.puts(current_state)
-    accep = automata_transition(current_state,tape)
-    IO.puts(accep)
+    current_state = "q0"
+    automata_transition(current_state,tape)
   end
 
   @doc """
@@ -18,10 +16,10 @@ defmodule DETERMAUTOMATA do
   """
   def automata_transition(current_state, tape) do
     next_state = get_next_state(current_state, tape)
-    if (next_state == :q2) do
-      IO.puts("Chain accepted")
+    if (next_state == "q2") do
+      true
     else
-      IO.puts("Chain not accepted")
+      false
     end
   end
 
@@ -30,31 +28,32 @@ defmodule DETERMAUTOMATA do
       List.first(tape) == nil -> #end of tape
         current_state
 
-      current_state == :q0 ->
-        if (List.first(tape) == :a) do
-          List.delete(tape,0)
-          get_next_state(:q1,tape)
+      current_state == "q0" ->
+        IO.puts("Beggining of tape")
+        if (List.first(tape) == "a") do
+          tape2 = List.delete_at(tape,0)
+          get_next_state("q1",tape2)
         else
-          List.delete(tape,0)
-          get_next_state(:q3,tape)
+          tape2 = List.delete_at(tape,0)
+          get_next_state("q3",tape2)
         end
 
-      current_state == :q1 ->
-        if (List.first(tape) == :a) do
-          List.delete(tape,0)
-          get_next_state(:q3,tape)
+      current_state == "q1" ->
+        if (List.first(tape) == "a") do
+          tape2 = List.delete_at(tape,0)
+          get_next_state("q3",tape2)
         else
-          List.delete(tape,0)
-          get_next_state(:q2,tape)
+          tape2 = List.delete_at(tape,0)
+          get_next_state("q2",tape2)
         end
 
-      current_state == :q2 ->
-        List.delete(tape,0)
-        get_next_state(:q2,tape)
+      current_state == "q2" ->
+        tape2 = List.delete_at(tape,0)
+        get_next_state("q2",tape2)
 
-      current_state == :q3 ->
-        List.delete(tape,0)
-        get_next_state(:q3,tape)
+      current_state == "q3" ->
+        tape2 = List.delete_at(tape,0)
+        get_next_state("q3",tape2)
     end
   end
 
@@ -71,5 +70,4 @@ defmodule DETERMAUTOMATA do
       read(tape2)
     end
   end
-
 end
