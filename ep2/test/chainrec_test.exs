@@ -71,15 +71,7 @@ defmodule CHAINRECTest do
     rules_map = Map.new |> Map.put("A","aA") |> Map.put("B","bB")
     terminals = MapSet.new |> MapSet.put("A") |> MapSet.put("B")
     max = 3
-    {terminal, new_first_rule} = String.split_at(first_rule,1)
-    rule = rules_map[terminal]
-    #IO.puts(rule)
-    add = CHAINREC.get_add_elements(rule, terminals, "")
-    #IO.puts(add)
-    # gets the possible subchains
-    rule_chains = CHAINREC.get_subchain(max, [], add, rules_map)
-    element = "4"
-    #assert CHAINREC.combine_subchains([], first_rule, rules_map, max, terminals) == ["a","b","ab","aab","abb"]
+    assert CHAINREC.combine_subchains([], first_rule, rules_map, max, terminals) == ["ab","abb","aab"]
   end
 
   @doc """

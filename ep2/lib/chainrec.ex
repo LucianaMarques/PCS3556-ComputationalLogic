@@ -28,7 +28,7 @@ defmodule CHAINREC do
   def get_subchain(max, list, add, rules_map) do
     # if list is empty, add the first subchain as the simple prefix
     if (List.first(list) == nil) do
-      list2 = list++[add]
+      list2 = List.flatten([add])
       get_subchain(max,list2,add,rules_map)
     else
       # get last computed subchain
@@ -36,17 +36,17 @@ defmodule CHAINREC do
       # if not empty, get the size of the last computed subchain
       # if size is equal to max, nothing to add anymore
       if (String.length(current) == max) do
-        list
+        List.flatten(list)
       else
         # if not equal to max, then add the prefix
         element = current<>add
         # if the result is a string of size bigger than max,
         # just return the previous list
         if (String.length(element) > max) do
-          list
+          List.flatten(list)
         else
           # if not, append the result to the list
-          list2 = list++[element]
+          list2 = List.flatten(list++[element])
           # and keep searching
           get_subchain(max,list2,add,rules_map)
         end
@@ -81,7 +81,7 @@ defmodule CHAINREC do
   def combine_subchains(list, first_rule, rules_map, max, terminals) do
     # if end of the first rule, just return the list created
     if (String.first(first_rule) == nil) do
-      list
+      List.flatten(list)
     else
       # gets the current rule and updates firs_rule
       {terminal, new_first_rule} = String.split_at(first_rule,1)
@@ -95,7 +95,7 @@ defmodule CHAINREC do
 
       # if no previous computed subchain, just add the rule's subchains
       if (List.first(list) == nil) do
-        list2 = list++[rule_chains]
+        list2 = List.flatten(list++[rule_chains])
         combine_subchains(list2,new_first_rule,rules_map,max,terminals)
       else
         # combine the rule's subchains with the already computed ones
@@ -116,18 +116,19 @@ defmodule CHAINREC do
   def combine_lists(list,rule_chains,max,result) do
     # When list is empty, just return the computed combinations
     if (List.first(list) == nil) do
-      result
+      IO.puts("Empty List")
+      List.flatten(result)
     else
       # Get the current element being added
       element = List.first(list)
       IO.puts(element)
       # Add the element to all in rule_chains, checking their size is (<= max)
-      list2 = Enum.map(rule_chains, fn x -> if(String.length(element<>x) <= max) do element<>x end end)
+      list2 = List.flatten(Enum.map(rule_chains, fn x -> if(String.length(element<>x) <= max) do element<>x end end))
       list4 = Enum.reject(list2, &is_nil/1)
       # Updates the list that holds the combining elements
       list3 = List.delete_at(list,0)
       # Keep going until 'list' is empty
-      combine_lists(list3,rule_chains,max,result++list4)
+      combine_lists(list3,rule_chains,max,List.flatten(result++list4))
     end
   end
 
