@@ -8,19 +8,14 @@ defmodule CHAINREC do
   @doc """
   Parse a set recursively and returns one of its elements
   """
-  def rec_parse(set_list) do
-    IO.puts(set_list)
-    [head| tail] = set_list
-    head
-    List.delete_at(set_list,0)
-    rec_parse(set_list)
-  end
-
-  @doc """
-  What to do once the list is empty
-  """
-  def rec_parse(set_list) when set_list == nil do
-    IO.puts("end of list")
+  def recursive_parse(list) do
+    if (List.first(list) == nil) do
+      IO.puts("End of List")
+    else
+      IO.puts(List.first(list))
+      list2 = List.delete_at(list,0)
+      recursive_parse(list2)
+    end
   end
 
   @doc """
