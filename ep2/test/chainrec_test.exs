@@ -1,11 +1,22 @@
 use Bitwise
+#use MapSet
 
 defmodule CHAINRECTest do
   use ExUnit.Case
   doctest CHAINREC
 
   test "recursive parse" do
-    CHAINREC.recursive_parse([1,1,2,3,4,4])
+    #CHAINREC.recursive_parse([1])
+  end
+
+  @doc """
+  This test was done to learn how to use the MapSet structure.
+  There were several problems with it, and an issue in gitub was oppened:
+  https://github.com/elixir-lang/elixir/issues/8953
+  """
+  test "crate mapset" do
+    terminals = MapSet.new |> MapSet.put("A")
+    assert MapSet.member?(terminals, "A") == true
   end
 
   @doc """

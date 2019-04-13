@@ -6,7 +6,7 @@ defmodule CHAINREC do
   """
 
   @doc """
-  Parse a set recursively and returns one of its elements
+  parse a recursively a list and prints one of its elements
   """
   def recursive_parse(list) do
     if (List.first(list) == nil) do
@@ -15,6 +15,22 @@ defmodule CHAINREC do
       IO.puts(List.first(list))
       list2 = List.delete_at(list,0)
       recursive_parse(list2)
+    end
+  end
+
+  @doc """
+  Given a list of terminals and a rule, get the elements to be added
+  rule -> string
+  T -> MapSet
+  add -> final generated string
+  """
+  def get_add_elements(rule, T, add) do
+    {current,rule2} = String.split_at(rule,1)
+    if (MapSet.member?(T, current)) do
+      add
+    else
+      add2 = add ++ current
+      get_add_elements(rule2,T,add2)
     end
   end
 
