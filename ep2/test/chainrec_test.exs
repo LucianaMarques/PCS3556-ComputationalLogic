@@ -20,6 +20,27 @@ defmodule CHAINRECTest do
   end
 
   @doc """
+  get the rule's prefix
+  """
+  test "get rule prefix" do
+    rule = "aA"
+    terminals = MapSet.new |> MapSet.put("A") |> MapSet.put("B")
+    assert CHAINREC.get_add_elements(rule, terminals, "") == "a"
+  end
+
+  @doc """
+  generates the rule's sub chains until max
+  """
+  test "generate sub chains" do
+    rules_map = Map.new |> Map.put("A","aA") |> Map.put("B","bB")
+    terminals = MapSet.new |> MapSet.put("A") |> MapSet.put("B")
+    max = 3
+    rule = "aA"
+    add = CHAINREC.get_add_elements(rule, terminals, "")
+    assert CHAINREC.get_subchain(max, [], add, rules_map) == ["a", "aa", "aaa"]
+  end
+
+  @doc """
   This test is to given a certain list of terminals, check if a chain has at least one terminal
   test "checks terminal existence" do
     non_terminals = MapSet.new()

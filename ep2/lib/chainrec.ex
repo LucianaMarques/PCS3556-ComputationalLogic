@@ -19,18 +19,54 @@ defmodule CHAINREC do
   end
 
   @doc """
+  function to get subchains accordingly to a rule
+  max -> int (maximum subchain size)
+  list -> list of String (list of already computed subchains)
+  add -> string (rule prefix got with get_add_elements())
+  rules_map -> Map<string,string> (map of terminals to their respective rules)
+  """
+  def get_subchain(max, list, add, rules_map) do
+    # if list is empty, add the first subchain as the simple prefix
+    if (List.first(list) == nil) do
+      list2 = list++[add]
+      get_subchain(max,list2,add,rules_map)
+    else
+      # get last computed subchain
+      current = List.last(list)
+      # if not empty, get the size of the last computed subchain
+      # if size is equal to max, nothing to add anymore
+      if (String.length(current) == max) do
+        list
+      else
+        # if not equal to max, then add the prefix
+        element = current<>add
+        # if the result is a string of size bigger than max,
+        # just return the previous list
+        if (String.length(element) > max) do
+          list
+        else
+          # if not, append the result to the list
+          list2 = list++[element]
+          # and keep searching
+          get_subchain(max,list2,add,rules_map)
+        end
+      end
+    end
+  end
+
+  @doc """
   Given a list of terminals and a rule, get the elements to be added
   rule -> string
   T -> MapSet
   add -> final generated string
   """
-  def get_add_elements(rule, T, add) do
+  def get_add_elements(rule, terminals, add) do
     {current,rule2} = String.split_at(rule,1)
-    if (MapSet.member?(T, current)) do
+    if (MapSet.member?(terminals, current)) do
       add
     else
-      add2 = add ++ current
-      get_add_elements(rule2,T,add2)
+      add2 = add<>current
+      get_add_elements(rule2,terminals,add2)
     end
   end
 
