@@ -72,27 +72,78 @@ defmodule CHAINREC do
 
   @doc """
   Generates all possible chains given grammar and maximum size
-  grammar  -> tuple
-  max_size -> integer
+  list -> List
+  first_rule -> String
+  rules_map -> Map
+  max -> int
+  terminals -> MapSet
   """
-  def gen_chains(grammar, max_size) do
-    # grammar -> list
+  def combine_subchains(list, first_rule, rules_map, max, terminals) do
+    # if end of the first rule, just return the list created
+    if (String.first(first_rule) == nil) do
+      list
+    else
+      # gets the current rule and updates firs_rule
+      {terminal, new_first_rule} = String.split_at(first_rule,1)
+      rule = rules_map[terminal]
+
+      # gets the rule's prefix
+      add = get_add_elements(rule, terminals, "")
+
+      # gets the possible subchains
+      rule_chains = get_subchain(max, [], add, rules_map)
+
+      # if no previous computed subchain, just add the rule's subchains
+      if (List.first(list) == nil) do
+        list2 = list++[rule_chains]
+        combine_subchains(list2,new_first_rule,rules_map,max,terminals)
+      else
+        # combine the rule's subchains with the already computed ones
+        list2 = combine_lists(list,rule_chains,max,[])
+        combine_subchains(list2,new_first_rule,rules_map,max,terminals)
+      end
+    end
+  end
+
+  @doc """
+  A function that combines elements in list with rule_chains and stores it in result
+  If a possible combination's size is bigger than max, then it's not added
+  list -> List of String
+  rule_chains -> Map
+  max -> int
+  result -> List of String
+  """
+  def combine_lists(list,rule_chains,max,result) do
+    # When list is empty, just return the computed combinations
+    if (List.first(list) == nil) do
+      result
+    else
+      # Get the current element being added
+      element = List.first(list)
+      IO.puts(element)
+      # Add the element to all in rule_chains, checking their size is (<= max)
+      list2 = Enum.map(rule_chains, fn x -> if(String.length(element<>x) <= max) do element<>x end end)
+      list4 = Enum.reject(list2, &is_nil/1)
+      # Updates the list that holds the combining elements
+      list3 = List.delete_at(list,0)
+      # Keep going until 'list' is empty
+      combine_lists(list3,rule_chains,max,result++list4)
+    end
+  end
+
+  # grammar -> list
     # get terminals and the initial symbol
-    T = elem(grammar, 0) # MapSet
-    N = elem(grammar, 1) # MapSet
-    Rules = elem(grammar, 2) # Map
-    Init_sym = elem(grammar, 3) # String
+    # T = elem(grammar, 0) # MapSet
+    # N = elem(grammar, 1) # MapSet
+    # Rules = elem(grammar, 2) # Map
+    # Init_sym = elem(grammar, 3) # String
 
     # Chains list, originally with Init_sym
-    chains = MapSet.new() # MapSet of Strings
-    MapSet.put(chains, Init_sym)
+    # chains = MapSet.new() # MapSet of Strings
+    # MapSet.put(chains, Init_sym)
 
     # Given Init_sym and grammar, create possible chains
-    all_chains = add_chains(chains, max_size, Rules, N)
-
-    # Returns the final list of possible chains
-    all_chains
-  end
+    # all_chains = add_chains(chains, max_size, Rules, N)
 
   @doc """
   chains -> MapSet
@@ -202,7 +253,7 @@ defmodule CHAINREC do
 
   @doc """
   Check if a chain is valid given a certain grammar
-  """
+
   def recognition(tape, grammar, max_size) do
     # generates possible chains given grammar
     chains = gen_chains(grammar,max_size)
@@ -216,4 +267,5 @@ defmodule CHAINREC do
       false
     end
   end
+  """
 end

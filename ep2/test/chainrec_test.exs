@@ -41,6 +41,48 @@ defmodule CHAINRECTest do
   end
 
   @doc """
+  test to combine lists
+  """
+  test "combine subchains" do
+    list = ["111","21"]
+    rule_chains = ["4","5"]
+    max = 3
+    #assert CHAINREC.combine_lists(list,rule_chains,max,[]) == ["214","215"]
+  end
+
+  @doc """
+  given a rule, get the possible subchains
+  """
+  test "rule subchains" do
+    max = 3
+    rules_map = Map.new |> Map.put("A","aA") |> Map.put("B","bB")
+    terminals = MapSet.new |> MapSet.put("A") |> MapSet.put("B")
+    terminal = "A"
+    rule = rules_map[terminal]
+    add = CHAINREC.get_add_elements(rule, terminals, "")
+    CHAINREC.get_subchain(max, [], add, rules_map) == ["a","aa","aaa"]
+  end
+
+  @doc """
+  test to combine possible subchains
+  """
+  test "get all subchains" do
+    first_rule = "AB"
+    rules_map = Map.new |> Map.put("A","aA") |> Map.put("B","bB")
+    terminals = MapSet.new |> MapSet.put("A") |> MapSet.put("B")
+    max = 3
+    {terminal, new_first_rule} = String.split_at(first_rule,1)
+    rule = rules_map[terminal]
+    #IO.puts(rule)
+    add = CHAINREC.get_add_elements(rule, terminals, "")
+    #IO.puts(add)
+    # gets the possible subchains
+    rule_chains = CHAINREC.get_subchain(max, [], add, rules_map)
+    element = "4"
+    #assert CHAINREC.combine_subchains([], first_rule, rules_map, max, terminals) == ["a","b","ab","aab","abb"]
+  end
+
+  @doc """
   This test is to given a certain list of terminals, check if a chain has at least one terminal
   test "checks terminal existence" do
     non_terminals = MapSet.new()
