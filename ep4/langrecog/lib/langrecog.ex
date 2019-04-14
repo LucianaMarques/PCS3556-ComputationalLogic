@@ -5,24 +5,12 @@ defmodule LANGRECOG do
 
   @doc """
   checks for long rules and apply the correspondent transformation
-  def long_rule(grammar,non-terminals) do
-    non-terminals-list = MapSet.to_list(non-terminals)
-
-    # End of analysing the non-terminals
-    if (List.first(non-terminals) == nil) do
-      grammar
-    else
-      # get current rule
-      current_rule = List.first(non-terminals-list)
-
-      # get the list of possible rules for current_rule
-      possible_rules = grammar[current_rule]
-
-      # update possible rule
-      {new_rule, new_terminal_and_rule} = get_long_rules(possible_rules, non-terminals, 0, grammar)
-    end
-  end
   """
+  def long_rule(grammar,non_terms) do
+    keys = Map.keys(grammar)
+    key = List.first(keys)
+    get_long_rules(grammar[key], non_terms, 0, grammar[key], key, [])
+  end
 
   @doc """
   check for long rules
