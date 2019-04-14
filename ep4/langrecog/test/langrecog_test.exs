@@ -18,4 +18,16 @@ defmodule LANGRECOGTest do
     assert update_rules == target_grammar
   end
 
+  @doc """
+  Check for e rules test
+  """
+  test "check for e rules" do
+    grammar = Map.new |> Map.put("S",["SS","(A","e"]) |> Map.put("A",["S)"])
+    rules_list = ["SS","(S)","e"]
+    assert LANGRECOG.contains_e_rules(rules_list) == true
+    element = "S"
+    assert LANGRECOG.add_new_e_rules(element, rules_list, []) == ["(S)","SS","(",")"]
+    target_grammar = Map.new |> Map.put("S",["SS","(A"]) |> Map.put("A",["S)"])
+    assert LANGRECOG.get_e_rules(grammar) == target_grammar
+  end
 end

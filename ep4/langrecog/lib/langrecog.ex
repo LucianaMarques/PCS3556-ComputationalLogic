@@ -58,17 +58,26 @@ defmodule LANGRECOG do
 
   @doc """
   Gets the rule map and returns the rule keys that contain an "e" rule
+  rules -> Map of rules
   """
   def get_e_rules(rules) do
     # get all the map keys
     k = Map.keys(rules)
-    contain_e_rules = check_for_e_rules(rules,k,[])
-    rules2 = change_rules(rules,contain_e_rules,[])
+    contain_e_rules1 = check_for_e_rules(rules,k,[])
+    contain_e_rules = e_rules(contain_e_rules1,k,[],rules)
+    new_grammar = Map.new
+    rules2 = change_rules(rules,contain_e_rules,new_grammar)
+  end
+
+  def e_rules(contain_e_rules,keys,result,rules) do
+    y = MapSet.new(contain_e_rules)
+    z = Enum.reject(keys, fn x -> MapSet.member?(y) end)
+    check_for_e_rules(rules, z, [])
   end
 
   @doc """
-  rules -> List of String
-  k -> String
+  rules -> Map of Rules
+  k -> List of String
   result -> List of String
   """
   def check_for_e_rules(rules, k, result) do
@@ -76,9 +85,9 @@ defmodule LANGRECOG do
       result
     else
       current = List.first(k)
-      k2 = List.delete_at(k,1)
-      if (contains_e_rules(rules[k]) == true) do
-        result2 = result++[current]
+      k2 = List.delete_at(k,0)
+      if (contains_e_rules(rules[current]) == true) do
+        result2 = List.flatten(result++[current])
         check_for_e_rules(rules, k2, result2)
       else
         check_for_e_rules(rules, k2, result)
@@ -93,11 +102,45 @@ defmodule LANGRECOG do
     if (List.first(rules_list) == nil) do
       false
     else
+      current = List.first(r@doc """
+      rules_list -> List of String
+      """
+      def contains_e_rules(rules_list,element) do
+        if (List.first(rules_list) == nil) do
+          false
+        else
+          current = List.first(rules_list)
+          if (current == "e") do
+            true
+          else
+            rules_list2 = List.delete_at(rules_list,0)
+            contains_e_rules(rules_list2)
+          end
+        end
+      endules_list)
+      if (current == "e") do
+        true
+      else
+        rules_list2 = List.delete_at(rules_list,0)
+        contains_e_rules(rules_list2)
+      end
+    end
+  end
+
+  @doc """
+  rules_list -> List of String
+  element -> String
+  """
+  def contains_e_rules(rules_list,element) do
+    if (List.first(rules_list) == nil) do
+      false
+    else
       current = List.first(rules_list)
       if (current == "e") do
         true
       else
-        contains_e_rules(List.delete_at(rules_list,1))
+        rules_list2 = List.delete_at(rules_list,0)
+        contains_e_rules(rules_list2)
       end
     end
   end
@@ -112,15 +155,26 @@ defmodule LANGRECOG do
       result
     else
       current = List.first(key_rules)
-      key_rules2 = List.delete_at(key_rules,1)
+      key_rules2 = List.delete_at(key_rules,0)
       if (String.contains?(current,key) == true) do
-        {first,last} = String.split(current,key)
-        result3 = result++[last]
-        result2 = result++[String.replace(first,key,"")]
-        add_new_e_rules(key, key_rules2, result2)
+        splits = String.split(current,key)
+        result2 = Enum.reject(splits, fn x -> x == "" end)
+        result3 = Enum.reject(result2, fn x -> x == "e" end)
+        if (length(result3) == 0) do
+          result2 = List.flatten([current]++result)
+          add_new_e_rules(key, key_rules2, result2)
+        else
+          result3 = List.flatten([current]++result++result2)
+          add_new_e_rules(key, key_rules2, result3)
+        end
       else
-        result2 = result++[current]
-        add_new_e_rules(key, key_rules2, result2)
+        cond do
+          current == "e" ->
+            add_new_e_rules(key, key_rules2, result)
+          current != "e" ->
+            result2 = result++[current]
+            add_new_e_rules(key, key_rules2, result2)
+        end
       end
     end
   end
@@ -135,7 +189,7 @@ defmodule LANGRECOG do
       new_rules
     else
       current = List.first(contain_e_rules)
-      contain_e_rules2 = List.delete_at(contain_e_rules,1)
+      contain_e_rules2 = List.delete_at(contain_e_rules,0)
       new_r = add_new_e_rules(current, rules[current], [])
       new_rules2 = Map.put(new_rules, current, new_r)
       change_rules(rules,contain_e_rules2,new_rules2)
