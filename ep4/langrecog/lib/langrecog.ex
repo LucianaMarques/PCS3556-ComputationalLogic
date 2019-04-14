@@ -7,38 +7,138 @@ defmodule LANGRECOG do
   checks for long rules and apply the correspondent transformation
   """
   def long_rule(grammar,non_terms) do
-    keys = Map.keys(grammar)
-    key = List.first(keys)
-    get_long_rules(grammar[key], non_terms, 0, grammar[key], key, [])
+    k = Map.keys(grammar)
+    key = List.first(k)
+    get_long_rules(grammar[key], non_terms, 0, grammar, key, [])
   end
 
   @doc """
   check for long rules
+  possible_rules -> list
+  non_terms -> MapSet
+  last_letter -> int
+  rules -> Map
+  current_term -> String
+  result -> list
   """
   def get_long_rules(possible_rules, non_term, last_letter, rules, current_term, result) do
+    # current rule being analysed
     current = List.first(possible_rules)
-    # IO.puts(current)
+    # if not in the end of the list
     if (current != nil) do
+      # lets see if we need to change anything
       size = String.length(current)
       new_possible_rules = List.delete_at(possible_rules,0)
+      # in case not, just keep going
       if (size<3) do
-        # IO.puts("found small rule")
         result2 = List.flatten(result++[current])
         get_long_rules(new_possible_rules,non_term,last_letter,rules,current_term,result2)
+      # in case yes
       else
-        # IO.puts("found long string")
+        # get the new letter for the non-terminal
         new_non_term = random_letter(last_letter, non_term)
+        # put it into the MapSet
         non_term2 = MapSet.put(non_term, new_non_term)
+        # split the current rule
         {first, last} = String.split_at(current,1)
-        # do it for the rest of the possible rules
+        # update the resulting new rules created for the current non-terminal
         result2 = List.flatten(result++[first<>new_non_term])
+        # add in the map the new non-term and the rule to it
         new_rule_map = Map.put(rules,new_non_term, [last])
+        # keep doing this for the rest of the found rules of the current element
         get_long_rules(new_possible_rules,non_term2,last_letter+1,new_rule_map,current_term,result2)
       end
     else
+    # after the end, just add the new rules for the curren term in the map
     update_rules1 = Map.delete(rules,current_term)
     update_rules = Map.put(update_rules1,current_term,result)
     {result,non_term,update_rules}
+    end
+  end
+
+  @doc """
+  Gets the rule map and returns the rule keys that contain an "e" rule
+  """
+  def get_e_rules(rules) do
+    # get all the map keys
+    k = Map.keys(rules)
+    contain_e_rules = check_for_e_rules(rules,k,[])
+    rules2 = change_rules(rules,contain_e_rules,[])
+  end
+
+  @doc """
+  rules -> List of String
+  k -> String
+  result -> List of String
+  """
+  def check_for_e_rules(rules, k, result) do
+    if (List.first(k) == nil) do
+      result
+    else
+      current = List.first(k)
+      k2 = List.delete_at(k,1)
+      if (contains_e_rules(rules[k]) == true) do
+        result2 = result++[current]
+        check_for_e_rules(rules, k2, result2)
+      else
+        check_for_e_rules(rules, k2, result)
+      end
+    end
+  end
+
+  @doc """
+  rules_list -> List of String
+  """
+  def contains_e_rules(rules_list) do
+    if (List.first(rules_list) == nil) do
+      false
+    else
+      current = List.first(rules_list)
+      if (current == "e") do
+        true
+      else
+        contains_e_rules(List.delete_at(rules_list,1))
+      end
+    end
+  end
+
+  @doc """
+  key -> String
+  key_rules -> List of String
+  result -> List of String
+  """
+  def add_new_e_rules(key, key_rules, result) do
+    if (List.first(key_rules) == nil) do
+      result
+    else
+      current = List.first(key_rules)
+      key_rules2 = List.delete_at(key_rules,1)
+      if (String.contains?(current,key) == true) do
+        {first,last} = String.split(current,key)
+        result3 = result++[last]
+        result2 = result++[String.replace(first,key,"")]
+        add_new_e_rules(key, key_rules2, result2)
+      else
+        result2 = result++[current]
+        add_new_e_rules(key, key_rules2, result2)
+      end
+    end
+  end
+
+  @doc """
+  rules -> Map
+  contain_e_rules -> List of String
+  new_rules -> List of String
+  """
+  def change_rules(rules,contain_e_rules,new_rules) do
+    if (List.first(contain_e_rules) == nil) do
+      new_rules
+    else
+      current = List.first(contain_e_rules)
+      contain_e_rules2 = List.delete_at(contain_e_rules,1)
+      new_r = add_new_e_rules(current, rules[current], [])
+      new_rules2 = Map.put(new_rules, current, new_r)
+      change_rules(rules,contain_e_rules2,new_rules2)
     end
   end
 

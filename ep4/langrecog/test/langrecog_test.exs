@@ -17,4 +17,5 @@ defmodule LANGRECOGTest do
     {result,non_term,update_rules} = LANGRECOG.long_rule(grammar,non_terms)
     assert update_rules == target_grammar
   end
+
 end
